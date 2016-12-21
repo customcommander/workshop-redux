@@ -20,6 +20,9 @@ function items (state = [], action) {
       return state.map((item, index) => {
         return index !== action.payload ? item : Object.assign({}, item, { completed: !item.completed });
       });
+    case REQUEST_ITEM:
+      return state
+      return [ ...state, { isLoading: true }];
     case REMOVE_ITEM:
       return state.filter((item, index) => index !== action.payload);
     case RECEIVE_ITEM:
@@ -39,5 +42,18 @@ function visibilityFilter (state = visibilityFilters.SHOW_ALL, action) {
   }
 }
 
+function queue(state, action) {
+    switch (action.type) {
+        case REQUEST_ITEM:
+            return state.concat({isLoading: true});
+        case RECEIVE_ITEM:
+            let newState = [ ...state ];
+            newState.pop();
+            return newState;
+        default:
+            return state;
+    }
+}
+
 // Export a reducer function that combines the above reducers
-module.exports = redux.combineReducers({ items, visibilityFilter });
+module.exports = redux.combineReducers({ items, visibilityFilter, queue });
